@@ -2276,7 +2276,12 @@ static void deparseRangeVar(StringInfo str, RangeVar *range_var, DeparseNodeCont
 
 static void deparseRawStmt(StringInfo str, RawStmt *raw_stmt)
 {
-	deparseStmt(str, raw_stmt->stmt);
+	if(raw_stmt->stmt != NULL) {
+		deparseStmt(str, raw_stmt->stmt);
+		return;
+	}
+
+	elog(ERROR, "deparse error in deparseRawStmt: RawStmt with empty Stmt");
 }
 
 static void deparseAlias(StringInfo str, Alias *alias)
