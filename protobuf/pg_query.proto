@@ -15,7 +15,7 @@ message ScanResult {
 }
 
 message Node {
-  oneof node {
+  oneof sealed_value {
 		Alias alias = 1 [json_name="Alias"];
     RangeVar range_var = 2 [json_name="RangeVar"];
     TableFunc table_func = 3 [json_name="TableFunc"];

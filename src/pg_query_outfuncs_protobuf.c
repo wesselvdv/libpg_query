@@ -18,7 +18,7 @@
 	pg_query__##typename_underscore##__init(__node); \
     _out##typename_c(__node, (const typename_cast *) obj); \
 	out->fldname = __node; \
-	out->node_case = PG_QUERY__NODE__NODE_##typename_underscore_upcase; \
+	out->sealed_value_case = PG_QUERY__NODE__SEALED_VALUE_##typename_underscore_upcase; \
   }
 
 #define WRITE_INT_FIELD(outname, outname_json, fldname) out->outname = node->fldname;

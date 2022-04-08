@@ -9,7 +9,7 @@
 #define OUT_TYPE(typename, typename_c) PgQuery__##typename_c*
 
 #define READ_COND(typename, typename_c, typename_underscore, typename_underscore_upcase, typename_cast, outname) \
-	case PG_QUERY__NODE__NODE_##typename_underscore_upcase: \
+	case PG_QUERY__NODE__SEALED_VALUE_##typename_underscore_upcase: \
 		return (Node *) _read##typename_c(msg->outname);
 
 #define READ_INT_FIELD(outname, outname_json, fldname) node->fldname = msg->outname;
@@ -89,31 +89,31 @@ static List * _readList(PgQuery__List *msg)
 
 static Node * _readNode(PgQuery__Node *msg)
 {
-	switch (msg->node_case)
+	switch (msg->sealed_value_case)
 	{
 		#include "pg_query_readfuncs_conds.c"
 
-		case PG_QUERY__NODE__NODE_INTEGER:
+		case PG_QUERY__NODE__SEALED_VALUE_INTEGER:
 			return (Node *) makeInteger(msg->integer->ival);
-		case PG_QUERY__NODE__NODE_FLOAT:
+		case PG_QUERY__NODE__SEALED_VALUE_FLOAT:
 			return (Node *) makeFloat(pstrdup(msg->float_->str));
-		case PG_QUERY__NODE__NODE_STRING:
+		case PG_QUERY__NODE__SEALED_VALUE_STRING:
 			return (Node *) makeString(pstrdup(msg->string->str));
-		case PG_QUERY__NODE__NODE_BIT_STRING:
+		case PG_QUERY__NODE__SEALED_VALUE_BIT_STRING:
 			return (Node *) makeBitString(pstrdup(msg->bit_string->str));
-		case PG_QUERY__NODE__NODE_NULL:
+		case PG_QUERY__NODE__SEALED_VALUE_NULL:
 			{
 				Value *v = makeNode(Value);
 				v->type = T_Null;
 				return (Node *) v;
 			}
-		case PG_QUERY__NODE__NODE_LIST:
+		case PG_QUERY__NODE__SEALED_VALUE_LIST:
 			return (Node *) _readList(msg->list);
-		case PG_QUERY__NODE__NODE__NOT_SET:
+		case PG_QUERY__NODE__SEALED_VALUE__NOT_SET:
 			return NULL;
 		default:
 			elog(ERROR, "unsupported protobuf node type: %d",
-				 (int) msg->node_case);
+				 (int) msg->sealed_value_case);
 	}
 }
 
